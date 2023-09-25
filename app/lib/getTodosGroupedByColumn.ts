@@ -1,11 +1,17 @@
 export const getTodosGroupedByColumn = async () => {
     const data = {
-        
+        "todos": [
+            {"title": "tip run", "status": "todo", "id": '0' },
+            {"title": "feed dog", "status": "done", "id": '1' },
+            {"title": "cook tea", "status": "in progress", "id": '2' },
+            {"title": "mop floors", "status": "todo", "id": '3' },
+        ],
     }
-    const columns = data.todos.reduce((acc, todo) => {
-        acc.get(data.todo.status)!.data.todos.push({
-            title: data.todo.title,
-            status: data.todo.status
+    const todos = data
+    const columns = todos.reduce((acc, todo) => {
+        acc.get(todo.status)!.todos.push({
+            title: todo.title,
+            status: todo.status
         })
         return acc
     }, new Map<TypedColumn, Column>())
