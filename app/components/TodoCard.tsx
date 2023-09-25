@@ -4,6 +4,7 @@ import {
   DraggableProvidedDragHandleProps,
   DraggableProvidedDraggableProps,
 } from 'react-beautiful-dnd'
+import XDelete from '../icons/XDelete'
 
 type TodoCardProps = {
   todo: Todo
@@ -28,8 +29,11 @@ const TodoCard: React.FC<TodoCardProps> = ({
       {...draggableProps}
       {...dragHandleProps}
       ref={innerRef}>
-      <div>
+      <div className='flex justify-between items-center p-5'>
         <p>{todo.title}</p>
+        <button className='text-red-500 hover:text-red-600'>
+          <XDelete className='ml-5 h-8 w-8' />
+        </button>
       </div>
     </div>
   )

@@ -24,7 +24,7 @@ const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}>
-          <Droppable droppableId={index.toString()} type='todo' type='card'>
+          <Droppable droppableId={index.toString()} type='card'>
             {(provided, snapshot) => (
               <div
                 {...provided.droppableProps}
