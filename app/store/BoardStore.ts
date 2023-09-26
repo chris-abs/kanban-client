@@ -10,9 +10,14 @@ interface BoardState {
   newTaskInput: string
   deleteTask: (taskIndex: number, todoId: Todo, id: TypedColumn) => void
   setNewTaskInput: (input: string) => void
+  newTaskType: TypedColumn
+  setNewTaskType: (columnId: TypedColumn) => void
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
+  newTaskInput: '',
+  newTaskType: 'todo',
+
   board: {
     columns: new Map<TypedColumn, Column>(),
   },
@@ -28,11 +33,11 @@ export const useBoardStore = create<BoardState>((set) => ({
     // call to update in database
   },
 
-  newTaskInput: '',
-
   deleteTask: async (taskIndex: number, todo: Todo, id: TypedColumn) => {
     // call to delete in database
   },
 
   setNewTaskInput: (input: string) => set({ newTaskInput: input }),
+
+  setNewTaskType: (columnId: TypedColumn) => set({ newTaskType: columnId }),
 }))
