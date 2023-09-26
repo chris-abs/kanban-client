@@ -11,6 +11,7 @@ const Header = () => {
         <div className='absolute top-0 left-0 w-full h-96 bg-gradient-to-br from-[#eca988] to-[#d88459] filter blur-3xl opacity-50 -z-50' /> */}
         {/* Logo */}
         <Image
+          priority
           src='/images/logo.png'
           alt='abbottban logo'
           width={200}
