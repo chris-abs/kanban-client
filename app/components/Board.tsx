@@ -4,7 +4,6 @@ import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd'
 
 import { useBoardStore } from '../store/BoardStore'
 import Column from './Column'
-import { start } from 'repl'
 
 const Board = () => {
   const [getBoard, board, setBoardState] = useBoardStore((state) => [
@@ -62,7 +61,7 @@ const Board = () => {
       todos: finishColIndex[1].todos,
     }
 
-    // error protection - if values aren't returned or
+    // edge case protection - if values aren't returned or
     // if user drops todo back to its exact same position in same column, return
     if (!startCol || !finishCol) return
     if (source.index === destination.index && startCol === finishCol) {
@@ -91,7 +90,7 @@ const Board = () => {
       // replacing the old column with the new column
       newColumns.set(startCol.id, newCol)
       // setting to global state
-      setBoardState({ ...board, columns: newColumns })
+      return setBoardState({ ...board, columns: newColumns })
     } else {
       // ** todo is dragged into a new column **
 
@@ -121,7 +120,6 @@ const Board = () => {
       return setBoardState({ ...board, columns: newColumns })
     }
 
-    console.log(board)
     return (
       <DragDropContext onDragEnd={handleOnDragEnd}>
         <Droppable droppableId='board' direction='horizontal' type='column'>

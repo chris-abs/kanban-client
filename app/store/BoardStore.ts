@@ -5,6 +5,7 @@ interface BoardState {
   board: Board
   getBoard: () => void
   setBoardState: (board: Board) => void
+  updateTodoInDB: (todo: Todo, columnId: TypedColumn) => void
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
@@ -18,4 +19,8 @@ export const useBoardStore = create<BoardState>((set) => ({
   },
 
   setBoardState: (board) => set({ board }),
+
+  updateTodoInDB: async (todo, columnId) => {
+    // call to update in database
+  },
 }))

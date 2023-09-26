@@ -1,8 +1,8 @@
-type XDeleteProps = {
+type AddProps = {
   className: string
 }
 
-const XDelete: React.FC<XDeleteProps> = ({ className }) => {
+const Add: React.FC<AddProps> = ({ className }) => {
   return (
     <div className={className}>
       <svg
@@ -15,11 +15,11 @@ const XDelete: React.FC<XDeleteProps> = ({ className }) => {
         <path
           strokeLinecap='round'
           strokeLinejoin='round'
-          d='M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+          d='M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z'
         />
       </svg>
     </div>
   )
 }
 
-export default XDelete
+export default Add

@@ -1,6 +1,6 @@
 import { Draggable, Droppable } from 'react-beautiful-dnd'
 import TodoCard from './TodoCard'
-import XDelete from '../icons/XDelete'
+import Add from '../icons/Add'
 
 type ColumnProps = {
   id: TypedColumn
@@ -18,12 +18,14 @@ const idToColumnTitle: {
 
 const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
   return (
+    // Rendering draggable columns for the todo statuses
     <Draggable draggableId={id} index={index}>
       {(provided) => (
         <div
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}>
+          {/* Rendering droppable todos inside of the columns */}
           <Droppable droppableId={index.toString()} type='card'>
             {(provided, snapshot) => (
               <div
@@ -60,7 +62,7 @@ const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
 
                   <div className='flex items-end justify-end p-2'>
                     <button className='text-green-500 hover:text-green-600'>
-                      <XDelete className='h-10 w-10' />
+                      <Add className='h-10 w-10' />
                     </button>
                   </div>
                 </div>
