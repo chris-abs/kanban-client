@@ -4,6 +4,7 @@ import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd'
 
 import { useBoardStore } from '../store/BoardStore'
 import Column from './Column'
+import { start } from 'repl'
 
 const Board = () => {
   const [getBoard, board, setBoardState] = useBoardStore((state) => [
@@ -17,52 +18,107 @@ const Board = () => {
 
   const handleOnDragEnd = (result: DropResult) => {
     const { destination, source, type } = result
+
     console.log('destination', destination)
     console.log('source', source)
     console.log('type', type)
 
+    // if a user drags outside of a column
     if (!destination) return
 
     if (type === 'column') {
+      // converting key value pairs to an array
       const entries = Array.from(board.columns.entries())
+      // storing todo as 'removed' and removing it from the original locations array
       const [removed] = entries.splice(source.index, 1)
+      // pushing the 'removed' todo into its chosen position in the new column
       entries.splice(destination.index, 0, removed)
+      // storing entries in a new rearranged column
       const rearrangedColumns = new Map(entries)
-      //   setBoardState({
-      //     ...board,
-      //     columns: rearrangedColumns,
-      //   })
-      // }
+      // setting the updating columns' global state
+      setBoardState({
+        ...board,
+        columns: rearrangedColumns,
+      })
+    }
 
-      // data indexes are being stored as numbers by DnD as opposed to IDs
-      const columns = Array.from(board.columns)
+    // data indexes are being stored as numbers by DnD as opposed to IDs, which is not of the same map format
+    // - so we need to convert
 
-      // if (
+    // create a copy of the column
+    const columns = Array.from(board.columns)
+    // creating variables that translate the source and destination index values into their respective IDs
+    // ie, source: 0 -> todo, destination: 3 -> done
+    const startColIndex = columns[Number(source.droppableId)]
+    const finishColIndex = columns[Number(destination.droppableId)]
 
-      // column start id === column finish id
-      // we know the todo is being repositioned inside of the same column
+    const startCol: Column = {
+      id: startColIndex[0],
+      todos: startColIndex[1].todos,
+    }
 
-      // ) {
+    const finishCol: Column = {
+      id: finishColIndex[0],
+      todos: finishColIndex[1].todos,
+    }
 
+    // error protection - if values aren't returned or
+    // if user drops todo back to its exact same position in same column, return
+    if (!startCol || !finishCol) return
+    if (source.index === destination.index && startCol === finishCol) {
+      return
+    }
+
+    // copy of todos
+    const newTodos = startCol.todos
+    // splice the todo that's moving
+    const [todoMoved] = newTodos.splice(source.index, 1)
+
+    // we need to manage two cases, if a todo is being repositioned inside the column it came from
+    // or if the todo is being moved into a different column
+    if (startCol.id === finishCol.id) {
       // ** todo is dragged into a new position in the same column **
-      // splice todos by destination index and todoMoved
-      // create newColumn with the new data
-      // create new map using the new column
-      // set board state
 
-      // } else {
-
+      // splice into the new column location
+      newTodos.splice(destination.index, 0, todoMoved)
+      //create a new column object
+      const newCol = {
+        id: startCol.id,
+        todos: newTodos,
+      }
+      // creating a new mutable copy of the existing column
+      const newColumns = new Map(board.columns)
+      // replacing the old column with the new column
+      newColumns.set(startCol.id, newCol)
+      // setting to global state
+      setBoardState({ ...board, columns: newColumns })
+    } else {
       // ** todo is dragged into a new column **
-      // create new array
-      // splice array using the destination index and todoMoved
-      // create a newColumns using a new map and the old board.columns
-      // create a new column with the same structure as the old colum
-      // and set the new data ontop of the old data
 
-      // }
+      // copy of finished column
+      const finishTodos = Array.from(finishCol.todos)
+      // splicing to find the moving todo
+      finishTodos.splice(destination.index, 0, todoMoved)
+      // creating a new mutable copy of the existing columns
+      const newColumns = new Map(board.columns)
+      // create a new column object
+      const newCol = {
+        id: startCol.id,
+        todos: newTodos,
+      }
 
-      // update database
-      // setBoardState((...board, columns: newColumns))
+      // replace the original source column with the updated source column (- moved todo)
+      newColumns.set(startCol.id, newCol)
+      // replace the orginal destination column with the updated destination (+ moved todo)
+      newColumns.set(finishCol.id, {
+        id: finishCol.id,
+        todos: finishTodos,
+      })
+
+      // TODO: update in DB
+
+      // update global state
+      return setBoardState({ ...board, columns: newColumns })
     }
 
     console.log(board)
