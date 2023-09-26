@@ -2,7 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
-const inter = Inter({ subsets: ['latin'] })
+import Modal from './components/Modal'
 
 export const metadata: Metadata = {
   title: 'Kanban board',
@@ -16,7 +16,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className='bg-background'>{children}</body>
+      <body className='bg-background'>
+        {children}
+        <Modal />
+      </body>
     </html>
   )
 }
