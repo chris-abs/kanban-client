@@ -3,7 +3,7 @@
 import {
   DraggableProvidedDragHandleProps,
   DraggableProvidedDraggableProps,
-} from 'react-beautiful-dnd'
+} from '@hello-pangea/dnd'
 import Delete from '../icons/Delete'
 import { useBoardStore } from '../store/BoardStore'
 

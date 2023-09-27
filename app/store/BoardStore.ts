@@ -23,8 +23,8 @@ export const useBoardStore = create<BoardState>((set) => ({
     columns: new Map<TypedColumn, Column>(),
   },
 
-  getBoard: async () => {
-    const board = await getTodosGroupedByColumn()
+  getBoard: () => {
+    const board = getTodosGroupedByColumn()
     set({ board })
   },
 
