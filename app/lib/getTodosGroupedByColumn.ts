@@ -3,7 +3,7 @@ import axios from 'axios'
 // Define a function for fetching data from the API
 async function getTasks(apiEndpoint: string): Promise<any> {
   try {
-    const response = await axios.get('http://localhost:4000/api')
+    const response = await axios.get('http://localhost:4000/api/v1/todo')
     return response.data
   } catch (error) {
     throw new Error('Failed to fetch data from the API')
@@ -13,7 +13,7 @@ async function getTasks(apiEndpoint: string): Promise<any> {
 export const getTodosGroupedByColumn = async (apiEndpoint: string) => {
   try {
     // Fetch data from the API
-    const tasks = await getTasks('http://localhost:4000/api')
+    const tasks = await getTasks('http://localhost:4000/api/v1/todo')
 
     // Initialize an empty Map for columns
     const columns = new Map<TypedColumn, Column>()

@@ -24,7 +24,9 @@ export const useBoardStore = create<BoardState>((set) => ({
   },
 
   getBoard: async () => {
-    const board = await getTodosGroupedByColumn('http://localhost:4000/api')
+    const board = await getTodosGroupedByColumn(
+      'http://localhost:4000/api/v1/todo'
+    )
     set({ board })
   },
 
