@@ -2,6 +2,7 @@ import { Draggable, Droppable } from 'react-beautiful-dnd'
 import TodoCard from './TodoCard'
 import Add from '../icons/Add'
 import { useModalStore } from '../store/ModalStore'
+import { useBoardStore } from '../store/BoardStore'
 
 type ColumnProps = {
   id: TypedColumn
@@ -18,7 +19,13 @@ const idToColumnTitle: {
 }
 
 const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
+  const [setNewTaskType] = useBoardStore((state) => [state.setNewTaskType])
   const openModal = useModalStore((state) => state.openModal)
+
+  const handleAddTodo = () => {
+    setNewTaskType(id)
+    openModal()
+  }
 
   return (
     // Rendering draggable columns for the todo statuses
@@ -65,7 +72,7 @@ const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
 
                   <div className='flex items-end justify-end p-2'>
                     <button
-                      onClick={openModal}
+                      onClick={handleAddTodo}
                       className='text-green-500 hover:text-green-600'>
                       <Add className='h-10 w-10' />
                     </button>

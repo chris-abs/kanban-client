@@ -11,6 +11,7 @@ const Board = () => {
     state.board,
     state.setBoardState,
   ])
+
   useEffect(() => {
     getBoard
   }, [getBoard])
@@ -23,7 +24,9 @@ const Board = () => {
     console.log('type', type)
 
     // if a user drags outside of a column
-    if (!destination) return
+    if (!destination) {
+      return
+    }
 
     if (type === 'column') {
       // converting key value pairs to an array
@@ -117,26 +120,34 @@ const Board = () => {
       // TODO: update in DB
 
       // update global state
-      return setBoardState({ ...board, columns: newColumns })
+      setBoardState({ ...board, columns: newColumns })
     }
 
     return (
-      <DragDropContext onDragEnd={handleOnDragEnd}>
-        <Droppable droppableId='board' direction='horizontal' type='column'>
-          {(provided) => (
-            <div
-              className='grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl mx-auto'
-              {...provided.droppableProps}
-              ref={provided.innerRef}>
-              {Array.from(board.columns.entries()).map(
-                ([id, column], index) => (
-                  <Column key={id} id={id} todos={column.todos} index={index} />
-                )
-              )}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <>
+        <div className='w-full h-screen bg-blue-50'></div>
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          <Droppable droppableId='board' direction='horizontal' type='column'>
+            {(provided) => (
+              <div
+                className='grid grid-cols-1 md:grid-cols-3 gap-5 max-w-7xl mx-auto'
+                {...provided.droppableProps}
+                ref={provided.innerRef}>
+                {Array.from(board.columns.entries()).map(
+                  ([id, column], index) => (
+                    <Column
+                      key={id}
+                      id={id}
+                      todos={column.todos}
+                      index={index}
+                    />
+                  )
+                )}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </>
     )
   }
 }

@@ -1,4 +1,4 @@
-export const getTodosGroupedByColumn = async () => {
+export const getTodosGroupedByColumn = () => {
   const todos = [
     { title: 'tip run', status: 'todo' as TypedColumn, id: '0' },
     { title: 'feed dog', status: 'done' as TypedColumn, id: '1' },
