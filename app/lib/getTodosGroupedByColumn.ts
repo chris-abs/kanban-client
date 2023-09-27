@@ -1,19 +1,23 @@
 import axios from 'axios'
 
-// Define a function for fetching data from the API
-async function getTasks(apiEndpoint: string): Promise<any> {
-  try {
-    const response = await axios.get('http://localhost:4000/api/v1/todo')
-    return response.data
-  } catch (error) {
-    throw new Error('Failed to fetch data from the API')
+interface BoardResponse {
+  [key: string]: {
+    title: string
+    items: TodoResponse[]
   }
+}
+
+interface TodoResponse {
+  id: string
+  title: string
+  status: string
 }
 
 export const getTodosGroupedByColumn = async (apiEndpoint: string) => {
   try {
     // Fetch data from the API
-    const tasks = await getTasks('http://localhost:4000/api/v1/todo')
+    const response = await axios.get<BoardResponse>(apiEndpoint)
+    const tasks = response.data
 
     // Initialize an empty Map for columns
     const columns = new Map<TypedColumn, Column>()
@@ -22,11 +26,11 @@ export const getTodosGroupedByColumn = async (apiEndpoint: string) => {
     for (const columnType of Object.keys(tasks)) {
       const columnData = tasks[columnType]
 
-      // Use the TodoItem interface as the type for (item)
-      const todos = columnData.items.map((item: Todo) => ({
+      // Use the TodoResponse interface as the type for (item)
+      const todos = columnData.items.map((item: TodoResponse) => ({
         id: item.id,
         title: item.title,
-        status: columnType as TypedColumn, // Use columnType as status
+        status: item.status as TypedColumn,
       }))
 
       columns.set(columnType as TypedColumn, {
@@ -57,66 +61,8 @@ export const getTodosGroupedByColumn = async (apiEndpoint: string) => {
     }
 
     return board
-  } catch (error: any) {
-    // TODO: error handling
-    if (error instanceof Error) {
-      console.error('Error:', error.message)
-    } else {
-      console.error('An unknown error occurred')
-    }
+  } catch (error) {
+    // Todo: handle errors appropriately
+    throw new Error('Failed to fetch data from the API')
   }
 }
-
-// export const getTodosGroupedByColumn = () => {
-//   const todos = [
-//     { title: 'tip run', status: 'todo' as TypedColumn, id: '0' },
-//     { title: 'feed dog', status: 'done' as TypedColumn, id: '1' },
-//     { title: 'cook tea', status: 'inprogress' as TypedColumn, id: '2' },
-//     { title: 'mop floors', status: 'todo' as TypedColumn, id: '3' },
-//   ]
-
-//   console.log(todos)
-
-//   const columns = todos.reduce((acc, todo) => {
-//     if (!acc.get(todo.status)) {
-//       acc.set(todo.status, {
-//         id: todo.status,
-//         todos: [],
-//       })
-//     }
-
-//     acc.get(todo.status)!.todos.push({
-//       title: todo.title,
-//       status: todo.status,
-//       id: todo.id,
-//     })
-//     return acc
-//   }, new Map<TypedColumn, Column>())
-
-//   const columnTypes: TypedColumn[] = ['todo', 'inprogress', 'done']
-
-//   for (const columnType of columnTypes) {
-//     if (!columns.get(columnType)) {
-//       columns.set(columnType, {
-//         id: columnType,
-//         todos: [],
-//       })
-//     }
-//   }
-
-//   console.log('columns', columns)
-
-//   const sortedColumns = new Map(
-//     Array.from(columns.entries()).sort(
-//       (a, b) => columnTypes.indexOf(a[0]) - columnTypes.indexOf(b[0])
-//     )
-//   )
-
-//   console.log('sorted', sortedColumns)
-
-//   const board: Board = {
-//     columns: sortedColumns,
-//   }
-
-//   return board
-// }

@@ -1,5 +1,8 @@
 import { create } from 'zustand'
 import { getTodosGroupedByColumn } from '../lib/getTodosGroupedByColumn'
+import { io } from 'socket.io-client'
+
+const socket = io('http://localhost:4000')
 
 interface BoardState {
   board: Board
@@ -7,66 +10,94 @@ interface BoardState {
   setBoardState: (board: Board) => void
   updateTodoInDB: (todo: Todo, columnId: TypedColumn) => void
 
-  newTaskInput: string
-  addTask: (todo: string, columnId: TypedColumn) => void
-  deleteTask: (taskIndex: number, todoId: Todo, id: TypedColumn) => void
-  setNewTaskInput: (input: string) => void
-  newTaskType: TypedColumn
-  setNewTaskType: (columnId: TypedColumn) => void
+  newTodoInput: string
+  addTodo: (todo: string, columnId: TypedColumn) => void
+  deleteTodo: (todoIndex: number, todoId: Todo, id: TypedColumn) => void
+  setNewTodoInput: (input: string) => void
+  newTodoType: TypedColumn
+  setNewTodoType: (columnId: TypedColumn) => void
 }
 
 export const useBoardStore = create<BoardState>((set) => ({
-  newTaskInput: '',
-  newTaskType: 'todo',
+  newTodoInput: '',
+  newTodoType: 'todo',
 
   board: {
     columns: new Map<TypedColumn, Column>(),
   },
 
   getBoard: async () => {
-    const board = await getTodosGroupedByColumn(
-      'http://localhost:4000/api/v1/todo'
-    )
-    set({ board })
+    try {
+      const board = await getTodosGroupedByColumn(
+        'http://localhost:4000/api/v1/todo'
+      )
+      set({ board })
+    } catch (error: any) {
+      if (error instanceof Error) {
+        console.error('Error:', error.message)
+      } else {
+        console.error('An unknown error occurred')
+      }
+    }
   },
 
   setBoardState: (board) => set({ board }),
 
   updateTodoInDB: async (todo, columnId) => {
-    // call to update in database
+    try {
+      // Call the API endpoint to update the todo
+      // Example:
+      // await axios.put(`http://localhost:4000/api/v1/todo/${todo.id}`, {
+      //   title: todo.title,
+      //   status: columnId,
+      // });
+      // After updating the todo in the API, you can update the local state if needed
+      // ...
+      socket.emit('todoUpdated', todo)
+    } catch (error: any) {
+      // Handle the error here (e.g., logging or showing an error message)
+      console.error('Failed to update todo:', error.message)
+    }
   },
 
-  deleteTask: async (taskIndex: number, todo: Todo, id: TypedColumn) => {
-    // call to delete in database
+  deleteTodo: async (todoIndex: number, todo: Todo, id: TypedColumn) => {
+    try {
+      // Call the API endpoint to delete the todo
+      // Example:
+      // await axios.delete(`http://localhost:4000/api/v1/todo/${todo.id}`);
+      // After deleting the todo in the API, you can update the local state if needed
+      // ...
+      socket.emit('todoDeleted', todo)
+    } catch (error: any) {
+      // Handle the error here (e.g., logging or showing an error message)
+      console.error('Failed to delete todo:', error.message)
+    }
   },
 
-  setNewTaskInput: (input: string) => set({ newTaskInput: input }),
+  setNewTodoInput: (input: string) => set({ newTodoInput: input }),
 
-  setNewTaskType: (columnId: TypedColumn) => set({ newTaskType: columnId }),
+  setNewTodoType: (columnId: TypedColumn) => set({ newTodoType: columnId }),
 
-  addTask: async (todo: string, columnId: TypedColumn) => {
-    set({ newTaskInput: '' })
-    set((state) => {
-      const newColumns = new Map(state.board.columns)
-      const newTodo: Todo = {
-        // Todo: change id to a created task id when made in db
-        id: (Math.random() * 10000 + 1).toString(),
-        title: todo,
-        status: columnId,
-      }
+  addTodo: async (todo: string, columnId: TypedColumn) => {
+    try {
+      // Call the API endpoint to create a new todo
+      // Example:
+      // const response = await axios.post(`http://localhost:4000/api/v1/todo`, {
+      //   title: todo,
+      //   status: columnId,
+      // });
+      // const newTodo = response.data;
 
-      const column = newColumns.get(columnId)
-
-      if (!column) {
-        newColumns.set(columnId, {
-          id: columnId,
-          todos: [newTodo],
-        })
-      } else {
-        newColumns.get(columnId)?.todos.push(newTodo)
-      }
-
-      return { board: { columns: newColumns } }
-    })
+      // After creating the new todo in the API, you can update the local state if needed
+      // ...
+      socket.emit(
+        'todoCreated'
+        // newTodo
+      )
+      set({ newTodoInput: '' })
+    } catch (error: any) {
+      // Handle the error here (e.g., logging or showing an error message)
+      console.error('Failed to add todo:', error.message)
+    }
   },
 }))
