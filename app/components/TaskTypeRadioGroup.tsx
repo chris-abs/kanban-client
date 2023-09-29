@@ -1,25 +1,25 @@
 'use client'
 
 import { RadioGroup } from '@headlessui/react'
-import { useBoardStore } from '../store/BoardStore'
+import useBoardStore from '../store/BoardStore'
 import Check from '../icons/Check'
 
 const groupTypes = [
   {
     id: 'todo',
     name: 'Todo',
-    desription: 'A task not started',
+    description: 'A task not started',
     colour: 'bg-red-500',
   },
   {
     id: 'inprogress',
     name: 'In Progress',
-    description: 'A task current in progress',
+    description: 'A task currently in progress',
     colour: 'bg-amber_300',
   },
   {
     id: 'done',
-    name: 'done',
+    name: 'Done',
     description: 'A completed task',
     colour: 'bg-green-500',
   },

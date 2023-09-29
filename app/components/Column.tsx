@@ -2,41 +2,44 @@ import { Draggable, Droppable } from '@hello-pangea/dnd'
 import TodoCard from './TodoCard'
 import Add from '../icons/Add'
 import { useModalStore } from '../store/ModalStore'
-import { useBoardStore } from '../store/BoardStore'
+import useBoardStore from '../store/BoardStore'
 
 type ColumnProps = {
-  id: TypedColumn
-  todos: Todo[]
+  id: string
+  tasks: Task[]
   index: number
+  status: string
 }
 
 const idToColumnTitle: {
-  [key in TypedColumn]: string
+  [key in string]: string
 } = {
   todo: 'To Do',
   inprogress: 'In Progress',
   done: 'Done',
 }
 
-const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
-  const [setNewTaskType] = useBoardStore((state) => [state.setNewTaskType])
+const Column: React.FC<ColumnProps> = ({ id, status, tasks, index }) => {
+  const { setSelectedCol } = useBoardStore()
   const openModal = useModalStore((state) => state.openModal)
 
   const handleAddTodo = () => {
-    setNewTaskType(id)
+    setSelectedCol({
+      id: id,
+      status: status,
+    })
     openModal()
   }
 
   return (
-    // Rendering draggable columns for the todo statuses
-    <Draggable draggableId={id} index={index}>
+    // Rendering draggable columns for the task statuses
+    <Draggable draggableId={id} index={index} key={index}>
       {(provided) => (
         <div
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}>
-          {/* Rendering droppable todos inside of the columns */}
-          <Droppable droppableId={index.toString()} type='card'>
+          <Droppable droppableId={id} type='card'>
             {(provided, snapshot) => (
               <div
                 {...provided.droppableProps}
@@ -44,23 +47,23 @@ const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
                 className={`p-2 rounded-2xl shadow-sm ${
                   snapshot.isDraggingOver ? 'bg-green-200' : 'bg-white/50'
                 }`}>
-                <h2 className='flex justify-between font-bold text-xl'>
-                  {idToColumnTitle[id]}
-                  <span className='text-gray-500 bg-200 rounded-full px-2 py-1 text-sm font-normal'>
-                    {todos.length}
+                <h2 className='flex justify-between font-bold text-xl pb-2'>
+                  {idToColumnTitle[status]}
+                  <span className='text-gray-500 rounded-full px-2 py-1 text-sm font-normal'>
+                    {tasks.length}
                   </span>
                 </h2>
                 <div className='space-y-2'>
-                  {todos.map((todo, index) => (
+                  {tasks.map((task: any, i) => (
                     <Draggable
-                      key={todo.id}
-                      draggableId={todo.id}
-                      index={index}>
+                      key={task._id}
+                      draggableId={task._id}
+                      index={Number(i)}>
                       {(provided) => (
                         <TodoCard
-                          todo={todo}
-                          index={index}
-                          id={id}
+                          task={task}
+                          index={i}
+                          id={task._id}
                           innerRef={provided.innerRef}
                           draggableProps={provided.draggableProps}
                           dragHandleProps={provided.dragHandleProps}
@@ -69,7 +72,6 @@ const Column: React.FC<ColumnProps> = ({ id, todos, index }) => {
                     </Draggable>
                   ))}
                   {provided.placeholder}
-
                   <div className='flex items-end justify-end p-2'>
                     <button
                       onClick={handleAddTodo}

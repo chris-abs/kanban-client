@@ -4,7 +4,7 @@ import { FormEvent, Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
 import { useModalStore } from '../store/ModalStore'
-import { useBoardStore } from '../store/BoardStore'
+import useBoardStore from '../store/BoardStore'
 import TaskTypeRadioGroup from './TaskTypeRadioGroup'
 
 const Modal = () => {
@@ -13,23 +13,26 @@ const Modal = () => {
     state.closeModal,
   ])
 
-  const [newTaskInput, setNewTaskInput, newTaskType, addTask] = useBoardStore(
-    (state) => [
+  const [newTaskInput, setNewTaskInput, newTaskType, addTask, selectedCol] =
+    useBoardStore((state) => [
       state.newTaskInput,
       state.setNewTaskInput,
       state.newTaskType,
       state.addTask,
-    ]
-  )
+      state.selectedCol,
+    ])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!newTaskInput) return
 
-    // Todo creating new task in DB
     console.log('submitted')
-    addTask(newTaskInput, newTaskType)
+    addTask({
+      title: newTaskInput,
+      columnId: selectedCol.id,
+      status: selectedCol.status,
+    })
 
     closeModal()
   }
@@ -51,7 +54,6 @@ const Modal = () => {
           leaveTo='opacity-0'>
           <div className='fixed inset-0 bg-black bg-opacity-25' />
         </Transition.Child>
-        02
         <div className='fixed inset-0 overflow-y-auto'>
           <div className='flex min-h-full items-center justify-center p-4 text-center'>
             <Transition.Child

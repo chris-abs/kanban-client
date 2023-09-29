@@ -1,16 +1,15 @@
 interface Board {
-  columns: Map<TypedColumn, Column>
+  columns: Map<string, Column>
 }
-
-type TypedColumn = 'todo' | 'inprogress' | 'done'
 
 interface Column {
-  id: TypedColumn
-  todos: Todo[]
+  id: string
+  name: string
+  tasks: Task[]
 }
 
-interface Todo {
+interface Task {
   id: string
   title: string
-  status: TypedColumn
+  status: string
 }

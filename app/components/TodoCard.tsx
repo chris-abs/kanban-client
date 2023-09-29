@@ -4,27 +4,32 @@ import {
   DraggableProvidedDragHandleProps,
   DraggableProvidedDraggableProps,
 } from '@hello-pangea/dnd'
-import Delete from '../icons/Delete'
-import { useBoardStore } from '../store/BoardStore'
 
-type TodoCardProps = {
-  todo: Todo
+import Delete from '../icons/Delete'
+import useBoardStore from '../store/BoardStore'
+
+type TaskCardProps = {
+  task: Task
   index: number
-  id: TypedColumn
+  id: string
   innerRef: (element: HTMLElement | null) => void
   draggableProps: DraggableProvidedDraggableProps
   dragHandleProps: DraggableProvidedDragHandleProps | null | undefined
 }
 
-const TodoCard: React.FC<TodoCardProps> = ({
-  todo,
+const TodoCard: React.FC<TaskCardProps> = ({
+  task,
   index,
   id,
   innerRef,
   draggableProps,
   dragHandleProps,
 }) => {
-  const deleteTask = useBoardStore((state) => state.deleteTask)
+  const { deleteTask } = useBoardStore()
+
+  const handleDeleteClick = () => {
+    deleteTask(task.id, task.status)
+  }
 
   return (
     <div
@@ -33,9 +38,9 @@ const TodoCard: React.FC<TodoCardProps> = ({
       {...dragHandleProps}
       ref={innerRef}>
       <div className='flex justify-between items-center p-5'>
-        <p>{todo.title}</p>
+        <p>{task.title}</p>
         <button
-          onClick={() => deleteTask(index, todo, id)}
+          onClick={handleDeleteClick}
           className='text-red-500 hover:text-red-600'>
           <Delete className='ml-5 h-8 w-8' />
         </button>
